@@ -80,7 +80,7 @@ const Navbar = () => {
       </style>
       <Container>
         <BootstrapNavbar.Brand
-          href="#"
+          href="/"
           style={{
             color: '#f3f4f6',
             fontWeight: '700',
@@ -96,7 +96,7 @@ const Navbar = () => {
         <BootstrapNavbar.Collapse id="basic-navbar-nav">
           <Nav className="me-auto">
             <Nav.Link
-              href="#"
+              href="/"
               style={{ fontSize: '1rem', padding: '0.5rem 1rem' }}
               aria-label="Dashboard Link"
             >
