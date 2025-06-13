@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react'; 
 import { Container, Row, Col, Alert, Spinner, Form } from 'react-bootstrap';
 import { supabase } from '../../utils/supabase';
 import { useAuth } from '../../hooks/useAuth';
@@ -12,7 +12,7 @@ const TodoList = ({ showAllTodos = false }) => {
   const [error, setError] = useState('');
   const [filter, setFilter] = useState('all');
 
-  const fetchTodos = async () => {
+  const fetchTodos = useCallback(async () => {
     if (!user) return;
 
     try {
@@ -31,15 +31,15 @@ const TodoList = ({ showAllTodos = false }) => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [user, showAllTodos]); // Dependencies for fetchTodos
 
-useEffect(() => {
-  if (user?.id) {
-    fetchTodos();
-  } else if (!authLoading) {
-    setLoading(false);
-  }
-}, [user?.id, showAllTodos, authLoading, fetchTodos]);
+  useEffect(() => {
+    if (user?.id) {
+      fetchTodos();
+    } else if (!authLoading) {
+      setLoading(false);
+    }
+  }, [user?.id, showAllTodos, authLoading, fetchTodos]);
 
   const filteredTodos = todos.filter(todo => {
     if (filter === 'completed') return todo.completed;
