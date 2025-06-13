@@ -80,7 +80,7 @@ const Navbar = () => {
       </style>
       <Container>
         <BootstrapNavbar.Brand
-          href="home"
+          href="#"
           style={{
             color: '#f3f4f6',
             fontWeight: '700',
@@ -94,24 +94,6 @@ const Navbar = () => {
         <BootstrapNavbar.Toggle aria-controls="basic-navbar-nav" />
 
         <BootstrapNavbar.Collapse id="basic-navbar-nav">
-          <Nav className="me-auto">
-            <Nav.Link
-              href="home"
-              style={{ fontSize: '1rem', padding: '0.5rem 1rem' }}
-              aria-label="Dashboard Link"
-            >
-              Dashboard
-            </Nav.Link>
-            {profile?.role === 'admin' && (
-              <Nav.Link
-                href="admin"
-                style={{ fontSize: '1rem', padding: '0.5rem 1rem' }}
-                aria-label="Admin Panel Link"
-              >
-                Admin Panel
-              </Nav.Link>
-            )}
-          </Nav>
 
           <Nav className="ms-auto align-items-center">
             <Nav.Item
