@@ -104,7 +104,7 @@ const Navbar = () => {
             </Nav.Link>
             {profile?.role === 'admin' && (
               <Nav.Link
-                href="admin"
+                href="/admin"
                 style={{ fontSize: '1rem', padding: '0.5rem 1rem' }}
                 aria-label="Admin Panel Link"
               >
