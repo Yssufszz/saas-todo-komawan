@@ -52,7 +52,7 @@ const AddTodo = ({ onTodoAdded }) => {
     try {
       const encryptedDescription = encrypt(formData.description);
 
-      const { data, error } = await supabase
+      const { error } = await supabase
         .from('todos')
         .insert([
           {

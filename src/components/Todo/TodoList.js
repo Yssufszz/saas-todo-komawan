@@ -33,13 +33,13 @@ const TodoList = ({ showAllTodos = false }) => {
     }
   };
 
-  useEffect(() => {
-    if (user?.id) {
-      fetchTodos();
-    } else if (!authLoading) {
-      setLoading(false);
-    }
-  }, [user?.id, showAllTodos, authLoading]);
+useEffect(() => {
+  if (user?.id) {
+    fetchTodos();
+  } else if (!authLoading) {
+    setLoading(false);
+  }
+}, [user?.id, showAllTodos, authLoading, fetchTodos]);
 
   const filteredTodos = todos.filter(todo => {
     if (filter === 'completed') return todo.completed;

@@ -148,27 +148,6 @@ const AdminDashboard = () => {
     fetchData();
   }, []);
 
-  const logUserLogin = async (userId, ipAddress = null, userAgent = null) => {
-    try {
-      const { error } = await supabase
-        .from('login_logs')
-        .insert([
-          {
-            user_id: userId,
-            login_time: new Date().toISOString(),
-            ip_address: ipAddress,
-            user_agent: userAgent
-          }
-        ]);
-      
-      if (error) {
-        console.error('Failed to log user login:', error);
-      }
-    } catch (error) {
-      console.error('Login logging error:', error);
-    }
-  };
-
   if (loading) {
     return (
       <Container
