@@ -42,4 +42,4 @@ const ProtectedRoute = ({ children, adminOnly = false }) => {
   return children
 }
 
-export { Navbar, ProtectedRoute }
+export { ProtectedRoute }

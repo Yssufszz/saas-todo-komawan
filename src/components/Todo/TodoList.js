@@ -7,13 +7,16 @@ import TodoItem from './TodoItem'
 import AddTodo from './AddTodo'
 
 const TodoList = ({ showAllTodos = false }) => {
-  const { user, isAdmin } = useAuth()
+  const { user, isAdmin, loading: authLoading } = useAuth()
   const [todos, setTodos] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [filter, setFilter] = useState('all')
 
   const fetchTodos = async () => {
+    // Don't fetch if user is not available yet
+    if (!user) return
+    
     try {
       let query = supabase.from('todos').select('*')
       
@@ -33,8 +36,14 @@ const TodoList = ({ showAllTodos = false }) => {
   }
 
   useEffect(() => {
-    fetchTodos()
-  }, [user.id, showAllTodos])
+    // Only fetch todos when user is available
+    if (user?.id) {
+      fetchTodos()
+    } else if (!authLoading) {
+      // If auth is not loading but user is still null, set loading to false
+      setLoading(false)
+    }
+  }, [user?.id, showAllTodos, authLoading])
 
   const filteredTodos = todos.filter(todo => {
     if (filter === 'completed') return todo.completed
@@ -42,7 +51,8 @@ const TodoList = ({ showAllTodos = false }) => {
     return true
   })
 
-  if (loading) {
+  // Show loading while auth is loading or todos are loading
+  if (authLoading || loading) {
     return (
       <Container className="mt-4">
         <Row className="justify-content-center">
@@ -50,6 +60,21 @@ const TodoList = ({ showAllTodos = false }) => {
             <Spinner animation="border" role="status">
               <span className="visually-hidden">Loading...</span>
             </Spinner>
+          </Col>
+        </Row>
+      </Container>
+    )
+  }
+
+  // Show error if user is not authenticated
+  if (!user) {
+    return (
+      <Container className="mt-4">
+        <Row>
+          <Col>
+            <Alert variant="warning">
+              Anda harus login untuk melihat todo list.
+            </Alert>
           </Col>
         </Row>
       </Container>

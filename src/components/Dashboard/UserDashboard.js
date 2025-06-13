@@ -5,7 +5,45 @@ import { TodoList } from '../Todo/TodoList'
 import { useAuth } from '../../hooks/useAuth'
 
 const UserDashboard = () => {
-  const { user, profile } = useAuth()
+  const { user, profile, loading } = useAuth()
+
+  // Show loading state while authentication is being checked
+  if (loading) {
+    return (
+      <Container className="mt-4">
+        <Row>
+          <Col>
+            <Card>
+              <Card.Body className="text-center">
+                <div className="spinner-border" role="status">
+                  <span className="visually-hidden">Loading...</span>
+                </div>
+                <p className="mt-2">Memuat...</p>
+              </Card.Body>
+            </Card>
+          </Col>
+        </Row>
+      </Container>
+    )
+  }
+
+  // Show error state if user is not authenticated
+  if (!user) {
+    return (
+      <Container className="mt-4">
+        <Row>
+          <Col>
+            <Card>
+              <Card.Body className="text-center">
+                <h5>Tidak dapat memuat data pengguna</h5>
+                <p className="text-muted">Silakan login kembali</p>
+              </Card.Body>
+            </Card>
+          </Col>
+        </Row>
+      </Container>
+    )
+  }
 
   return (
     <div>
@@ -37,3 +75,5 @@ const UserDashboard = () => {
     </div>
   )
 }
+
+export { UserDashboard }

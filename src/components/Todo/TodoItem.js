@@ -177,3 +177,5 @@ const TodoItem = ({ todo, onTodoUpdated, isAdmin = false }) => {
     </Card>
   )
 }
+
+export default TodoItem
