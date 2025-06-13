@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Container, Row, Col, Card, Table, Alert, Spinner, Nav } from 'react-bootstrap';
 import { supabase } from '../../utils/supabase';
 import { TodoList } from '../Todo/TodoList';
@@ -24,7 +24,7 @@ const AdminDashboard = () => {
     return Promise.race([promise, timeout]);
   };
 
-  const fetchStats = async () => {
+  const fetchStats = useCallback(async () => {
     try {
       let usersData = [];
       const profilesRes = await withTimeout(supabase.from('profiles').select('*'));
@@ -71,9 +71,9 @@ const AdminDashboard = () => {
       console.error('Error in fetchStats:', error.message);
       setError(`Failed to fetch stats: ${error.message}`);
     }
-  };
+  }, []); // Empty dependency array since fetchStats doesn't depend on props/state
 
-  const fetchLoginLogs = async () => {
+  const fetchLoginLogs = useCallback(async () => {
     try {
       const { data: logsData, error: logsError } = await withTimeout(
         supabase
@@ -152,7 +152,7 @@ const AdminDashboard = () => {
       console.error('Error in fetchLoginLogs:', error.message);
       setError(`Failed to fetch login logs: ${error.message}`);
     }
-  };
+  }, []); // Empty dependency array since fetchLoginLogs doesn't depend on props/state
 
   useEffect(() => {
     const fetchData = async () => {
@@ -171,7 +171,7 @@ const AdminDashboard = () => {
     };
     
     fetchData();
-  }, []);
+  }, [fetchStats, fetchLoginLogs]); // Add dependencies here
 
   if (loading) {
     return (
