@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Navbar as BootstrapNavbar, Nav, Container, Button, Spinner } from 'react-bootstrap';
+import { Link } from 'react-router-dom'; // Import Link
 import { useAuth } from '../../hooks/useAuth';
 
 const Navbar = () => {
@@ -80,7 +81,8 @@ const Navbar = () => {
       </style>
       <Container>
         <BootstrapNavbar.Brand
-          href="/"
+          as={Link} // Use Link instead of href
+          to="/" // Use 'to' instead of 'href'
           style={{
             color: '#f3f4f6',
             fontWeight: '700',
@@ -96,7 +98,8 @@ const Navbar = () => {
         <BootstrapNavbar.Collapse id="basic-navbar-nav">
           <Nav className="me-auto">
             <Nav.Link
-              href="/"
+              as={Link} // Use Link
+              to="/" // Use 'to'
               style={{ fontSize: '1rem', padding: '0.5rem 1rem' }}
               aria-label="Dashboard Link"
             >
@@ -104,7 +107,8 @@ const Navbar = () => {
             </Nav.Link>
             {profile?.role === 'admin' && (
               <Nav.Link
-                href="/admin"
+                as={Link} // Use Link
+                to="/admin" // Use 'to'
                 style={{ fontSize: '1rem', padding: '0.5rem 1rem' }}
                 aria-label="Admin Panel Link"
               >

@@ -16,16 +16,24 @@ const AdminDashboard = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
+  // Utility function to wrap promises with a timeout
+  const withTimeout = (promise, ms = 10000) => {
+    const timeout = new Promise((_, reject) =>
+      setTimeout(() => reject(new Error('Request timed out')), ms)
+    );
+    return Promise.race([promise, timeout]);
+  };
+
   const fetchStats = async () => {
     try {
       let usersData = [];
-      const profilesRes = await supabase.from('profiles').select('*');
+      const profilesRes = await withTimeout(supabase.from('profiles').select('*'));
       
       if (!profilesRes.error && profilesRes.data && profilesRes.data.length > 0) {
         usersData = profilesRes.data;
       } else {
         try {
-          const authUsersRes = await supabase.auth.admin.listUsers();
+          const authUsersRes = await withTimeout(supabase.auth.admin.listUsers());
           if (authUsersRes.data && authUsersRes.data.users) {
             usersData = authUsersRes.data.users.map(user => ({
               id: user.id,
@@ -35,16 +43,19 @@ const AdminDashboard = () => {
             }));
           }
         } catch (authError) {
+          console.error('Error fetching auth users:', authError.message);
           try {
-            const rpcRes = await supabase.rpc('get_all_users');
+            const rpcRes = await withTimeout(supabase.rpc('get_all_users'));
             if (!rpcRes.error && rpcRes.data) {
               usersData = rpcRes.data;
             }
-          } catch (rpcError) {}
+          } catch (rpcError) {
+            console.error('Error fetching users via RPC:', rpcError.message);
+          }
         }
       }
 
-      const todosRes = await supabase.from('todos').select('*');
+      const todosRes = await withTimeout(supabase.from('todos').select('*'));
       if (todosRes.error) throw todosRes.error;
 
       const todos = todosRes.data || [];
@@ -57,35 +68,40 @@ const AdminDashboard = () => {
         pendingTodos: todos.filter(t => !t.completed).length
       });
     } catch (error) {
-      setError(error.message);
+      console.error('Error in fetchStats:', error.message);
+      setError(`Failed to fetch stats: ${error.message}`);
     }
   };
 
   const fetchLoginLogs = async () => {
     try {
-      const { data: logsData, error: logsError } = await supabase
-        .from('login_logs')
-        .select(`
-          *,
-          profiles!login_logs_user_id_fkey (
-            id,
-            email,
-            role
-          )
-        `)
-        .order('login_time', { ascending: false })
-        .limit(50);
+      const { data: logsData, error: logsError } = await withTimeout(
+        supabase
+          .from('login_logs')
+          .select(`
+            *,
+            profiles!login_logs_user_id_fkey (
+              id,
+              email,
+              role
+            )
+          `)
+          .order('login_time', { ascending: false })
+          .limit(50)
+      );
 
       if (!logsError && logsData) {
         setLoginLogs(logsData);
         return;
       }
       
-      const logsResult = await supabase
-        .from('login_logs')
-        .select('*')
-        .order('login_time', { ascending: false })
-        .limit(50);
+      const logsResult = await withTimeout(
+        supabase
+          .from('login_logs')
+          .select('*')
+          .order('login_time', { ascending: false })
+          .limit(50)
+      );
       
       if (logsResult.error) throw logsResult.error;
       
@@ -93,16 +109,18 @@ const AdminDashboard = () => {
       
       if (userIds.length > 0) {
         let profilesData = [];
-        const profilesResult = await supabase
-          .from('profiles')
-          .select('id, email, role')
-          .in('id', userIds);
+        const profilesResult = await withTimeout(
+          supabase
+            .from('profiles')
+            .select('id, email, role')
+            .in('id', userIds)
+        );
         
         if (!profilesResult.error && profilesResult.data) {
           profilesData = profilesResult.data;
         } else {
           try {
-            const authRes = await supabase.auth.admin.listUsers();
+            const authRes = await withTimeout(supabase.auth.admin.listUsers());
             if (authRes.data && authRes.data.users) {
               profilesData = authRes.data.users
                 .filter(user => userIds.includes(user.id))
@@ -112,7 +130,9 @@ const AdminDashboard = () => {
                   role: user.user_metadata?.role || 'user'
                 }));
             }
-          } catch (authError) {}
+          } catch (authError) {
+            console.error('Error fetching profiles via auth:', authError.message);
+          }
         }
         
         const profilesMap = new Map(profilesData.map(p => [p.id, p]));
@@ -129,6 +149,7 @@ const AdminDashboard = () => {
         setLoginLogs(logsResult.data || []);
       }
     } catch (error) {
+      console.error('Error in fetchLoginLogs:', error.message);
       setError(`Failed to fetch login logs: ${error.message}`);
     }
   };
@@ -137,10 +158,14 @@ const AdminDashboard = () => {
     const fetchData = async () => {
       setLoading(true);
       try {
+        console.log('Fetching dashboard data...');
         await Promise.all([fetchStats(), fetchLoginLogs()]);
+        console.log('Dashboard data fetched successfully');
       } catch (error) {
+        console.error('Error fetching dashboard data:', error.message);
         setError(`Failed to load dashboard: ${error.message}`);
       } finally {
+        console.log('Setting loading to false');
         setLoading(false);
       }
     };
