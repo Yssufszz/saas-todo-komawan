@@ -1,0 +1,29 @@
+todo-saas/
+├── public/
+│   └── index.html
+├── src/
+│   ├── components/
+│   │   ├── Auth/
+│   │   │   ├── Login.js
+│   │   │   ├── Register.js
+│   │   │   └── VerifyOTP.js
+│   │   ├── Dashboard/
+│   │   │   ├── AdminDashboard.js
+│   │   │   └── UserDashboard.js
+│   │   ├── Todo/
+│   │   │   ├── TodoList.js
+│   │   │   ├── TodoItem.js
+│   │   │   └── AddTodo.js
+│   │   └── Layout/
+│   │       ├── Navbar.js
+│   │       └── ProtectedRoute.js
+│   ├── utils/
+│   │   ├── supabase.js
+│   │   ├── encryption.js
+│   │   └── auth.js
+│   ├── hooks/
+│   │   └── useAuth.js
+│   ├── App.js
+│   └── index.js
+├── package.json
+└── README.md
