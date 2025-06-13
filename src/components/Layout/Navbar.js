@@ -96,7 +96,7 @@ const Navbar = () => {
         <BootstrapNavbar.Collapse id="basic-navbar-nav">
           <Nav className="me-auto">
             <Nav.Link
-              href="dashboard"
+              href="home"
               style={{ fontSize: '1rem', padding: '0.5rem 1rem' }}
               aria-label="Dashboard Link"
             >
